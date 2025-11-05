@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, ConvertPixelFormat) { RGB, ARGB, RGBA, BGR, BGRA, ABGR };
 
-typedef NS_ENUM(NSInteger, ConvertDataType) { UINT8, FLOAT32 };
+typedef NS_ENUM(NSInteger, ConvertDataType) { UINT8, INT8, FLOAT32 };
 
 @interface FrameBuffer : NSObject
 

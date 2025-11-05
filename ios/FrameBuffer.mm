@@ -65,6 +65,9 @@
     case UINT8:
       // 8-bit uint
       return sizeof(uint8_t);
+    case INT8:
+      // 8-bit int
+      return sizeof(int8_t);
     case FLOAT32:
       // 32-bit float
       return sizeof(float);
