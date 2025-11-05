@@ -191,12 +191,14 @@ class ResizePlugin(private val proxy: VisionCameraProxy) : FrameProcessorPlugin(
   private enum class DataType {
     // Integer-Values (ordinals) to be in sync with ResizePlugin.h
     UINT8,
+    INT8,
     FLOAT32;
 
     companion object {
       fun fromString(string: String): DataType =
         when (string) {
           "uint8" -> UINT8
+          "int8" -> INT8
           "float32" -> FLOAT32
           else -> throw Error("Invalid DataType! ($string)")
         }

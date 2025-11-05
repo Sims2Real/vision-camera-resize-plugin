@@ -41,6 +41,8 @@ int getBytesPerChannel(DataType type) {
   switch (type) {
     case UINT8:
       return sizeof(uint8_t);
+    case INT8:
+      return sizeof(int8_t);
     case FLOAT32:
       return sizeof(float_t);
   }
@@ -383,6 +385,15 @@ FrameBuffer ResizePlugin::convertBufferToDataType(const FrameBuffer& frameBuffer
     case UINT8:
       // it's already uint8
       return frameBuffer;
+    case INT8: {
+      uint8_t* uintData = frameBuffer.data();
+      int8_t* intData = reinterpret_cast<int8_t*>(destination.data());
+
+      for (size_t i = 0; i < size; i++) {
+        intData[i] = static_cast<int8_t>(static_cast<int>(uintData[i]) - 128);
+      }
+      break;
+    }
     case FLOAT32: {
       float* floatData = reinterpret_cast<float*>(destination.data());
       status = libyuv::ByteToFloat(frameBuffer.data(), floatData, 1.0f / 255.0f, size);

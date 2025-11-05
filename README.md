@@ -118,7 +118,7 @@ The resize plugin operates in RGB colorspace.
 
 ## Data Types
 
-The resize plugin can either convert to uint8 or float32 values:
+The resize plugin can convert to `uint8`, `int8` or `float32` values:
 
 <table>
 <tr>
@@ -136,6 +136,13 @@ The resize plugin can either convert to uint8 or float32 values:
 </tr>
 
 <tr>
+<td><code>int8</code></td>
+<td><code>Int8Array</code></td>
+<td>-128...127</td>
+<td>1920x1080 RGB Frame = ~6.2 MB</td>
+</tr>
+
+<tr>
 <td><code>float32</code></td>
 <td><code>Float32Array</code></td>
 <td>0.0...1.0</td>
@@ -143,6 +150,21 @@ The resize plugin can either convert to uint8 or float32 values:
 </tr>
 
 </table>
+
+When using `int8`, the plugin subtracts 128 from each channel (`0 → -128`, `255 → 127`) so signed quantized tensors can be consumed without additional JS work.
+
+```ts
+const quantized = resize(frame, {
+  scale: {
+    width: 192,
+    height: 192,
+  },
+  pixelFormat: 'rgb',
+  dataType: 'int8',
+})
+
+// quantized is an Int8Array with length width * height * channels
+```
 
 ## Cropping
 

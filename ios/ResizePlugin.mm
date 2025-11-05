@@ -94,6 +94,8 @@ ConvertPixelFormat parsePixelFormat(NSString* pixelFormat) {
 ConvertDataType parseDataType(NSString* dataType) {
   if ([dataType isEqualToString:@"uint8"]) {
     return UINT8;
+  } else if ([dataType isEqualToString:@"int8"]) {
+    return INT8;
   } else if ([dataType isEqualToString:@"float32"]) {
     return FLOAT32;
   } else {
@@ -368,6 +370,17 @@ vImage_YpCbCrPixelRange getRange(FourCharCode pixelFormat) {
   switch (targetType) {
     case UINT8:
       break;
+    case INT8: {
+      // Convert uint8 -> int8 with zero-point shift of 128
+      uint8_t* input = (uint8_t*)source->data;
+      int8_t* output = (int8_t*)destination->data;
+      size_t numBytes = source->height * source->rowBytes;
+
+      for (size_t i = 0; i < numBytes; i++) {
+        output[i] = (int8_t)(input[i] - 128);
+      }
+      break;
+    }
     case FLOAT32: {
       // Convert uint8 -> float32
       uint8_t* input = (uint8_t*)source->data;

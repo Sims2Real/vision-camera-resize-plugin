@@ -6,7 +6,11 @@ import {
   useCameraPermission,
   useFrameProcessor,
 } from 'react-native-vision-camera';
-import { Options, useResizePlugin } from 'vision-camera-resize-plugin';
+import {
+  DataType,
+  Options,
+  useResizePlugin,
+} from 'vision-camera-resize-plugin';
 import { useSharedValue } from 'react-native-reanimated';
 import {
   Skia,
@@ -22,7 +26,15 @@ type PixelFormat = Options<'uint8'>['pixelFormat'];
 
 const WIDTH = 480;
 const HEIGHT = 640;
-const TARGET_TYPE = 'uint8' as const;
+const CHANNELS_PER_PIXEL: Record<PixelFormat, number> = {
+  rgb: 3,
+  bgr: 3,
+  rgba: 4,
+  argb: 4,
+  bgra: 4,
+  abgr: 4,
+};
+const TARGET_TYPE: DataType = 'int8';
 const TARGET_FORMAT: PixelFormat = 'rgba';
 
 export default function App() {
@@ -63,14 +75,17 @@ export default function App() {
         mirror: true,
       });
 
-      const data = Skia.Data.fromBytes(result);
+      const bytes =
+        result instanceof Int8Array ? new Uint8Array(result.buffer) : result;
+      const data = Skia.Data.fromBytes(bytes);
       updatePreviewImageFromData(data, TARGET_FORMAT);
       const end = performance.now();
 
+      const expectedLength = WIDTH * HEIGHT * CHANNELS_PER_PIXEL[TARGET_FORMAT];
+      const isInt8 = result instanceof Int8Array;
+
       console.log(
-        `Resized ${frame.width}x${frame.height} into 100x100 frame (${
-          result.length
-        }) in ${(end - start).toFixed(2)}ms`
+        `Resized ${frame.width}x${frame.height} into ${WIDTH}x${HEIGHT} frame (${result.length} values, expected ${expectedLength}) as ${TARGET_TYPE} (Int8Array: ${isInt8}) in ${(end - start).toFixed(2)}ms`
       );
     },
     [updatePreviewImageFromData]

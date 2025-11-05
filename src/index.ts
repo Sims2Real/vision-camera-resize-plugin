@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { Frame, VisionCameraProxy } from 'react-native-vision-camera';
 
-export type DataType = 'uint8' | 'float32';
+export type DataType = 'uint8' | 'int8' | 'float32';
 export type OutputArray<T extends DataType> = T extends 'uint8'
   ? Uint8Array
-  : T extends 'float32'
-    ? Float32Array
-    : never;
+  : T extends 'int8'
+    ? Int8Array
+    : T extends 'float32'
+      ? Float32Array
+      : never;
 
 interface Size {
   /**
@@ -66,6 +68,7 @@ export interface Options<T extends DataType> {
    * Each color channel uses this type for representing pixels.
    *
    * - `'uint8'`: Resulting buffer is a `Uint8Array`, values range from 0 to 255
+   * - `'int8'`: Resulting buffer is an `Int8Array`, values range from -128 to 127
    * - `'float32'`: Resulting buffer is a `Float32Array`, values range from 0.0 to 1.0
    */
   dataType: T;
@@ -113,6 +116,9 @@ export function createResizePlugin(): ResizePlugin {
         case 'uint8':
           // @ts-expect-error
           return new Uint8Array(arrayBuffer);
+        case 'int8':
+          // @ts-expect-error
+          return new Int8Array(arrayBuffer);
         case 'float32':
           // @ts-expect-error
           return new Float32Array(arrayBuffer);
